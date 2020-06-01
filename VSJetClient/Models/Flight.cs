@@ -14,6 +14,7 @@ namespace VSJetClient.Models
         public DateTime Date { get; set; }
 
         public int Seats { get; set; }
+        public double BasePrice { get; set; }
         public bool isComplete { get; set; }
     }
 }
