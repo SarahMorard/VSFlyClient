@@ -29,42 +29,50 @@ namespace VSJetClient.Controllers
             _logger = logger;
         }
 
+        //Form for the client
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
         //PAGE 1
         //Display the form for the booking
-        public async Task<IActionResult> DiplayFormBookingAsync(int id)
+        public async Task<IActionResult> Create(Customer customer)
         {
-            //Create a new Ticket 
+            //Post customer
+            await ApiClientFactory.Instance.SaveCustomer(customer);
+
+            //Post ticker
             Ticket ticket = new Ticket();
-            ticket.fk_flightId = id;
+            ticket.fk_flightId = customer.CustomerId;
             await ApiClientFactory.Instance.SaveTicket(ticket);
 
-            var data = await ApiClientFactory.Instance.GetFlight(id);   
-
-            return View(DiplayBookingAsync(id));
+            //Return general view of the booking
+            return View(DiplayBookingAsync(ticket.fk_flightId, ticket, customer));
         }
+
 
         //PAGE 2
         //Display the informations for the booking of the client
-        public async Task<IActionResult> DiplayBookingAsync(int id)
+        public async Task<IActionResult> DiplayBookingAsync(int flightId, Ticket ticket, Customer customer)
         {
             
             //Manage the viewModel
             BookingViewModel bookingViewModel = new BookingViewModel();
 
-            Flight flight = await ApiClientFactory.Instance.GetFlight(id);
-            Customer newCustomer = await ApiClientFactory.Instance.GetCustomerByFk(id);
-            Ticket ticket = await ApiClientFactory.Instance.GetTicketbyFk(id);
-
+            Flight flight = await ApiClientFactory.Instance.GetFlight(flightId);
+           
+            
             Booking booking = new Booking();
 
-            booking.FlighId = bookingViewModel.FlightId;
-            booking.CustomerId = bookingViewModel.CustomerId;
-            booking.TicketId = bookingViewModel.TicketId;
+            booking.FlighId = flight.FlightId;
+            booking.CustomerId = customer.CustomerId;
+            booking.TicketId = ticket.TicketId;
 
             await ApiClientFactory.Instance.SaveBooking(booking);
 
-            bookingViewModel.FirstName = newCustomer.FirstName;
-            bookingViewModel.LastName = newCustomer.LastName;
+            bookingViewModel.FirstName = customer.FirstName;
+            bookingViewModel.LastName = customer.LastName;
             bookingViewModel.FlightId = flight.FlightId;
             bookingViewModel.Department = flight.Department;
             bookingViewModel.Destination = flight.Destination;
@@ -74,23 +82,6 @@ namespace VSJetClient.Controllers
 
             return View(bookingViewModel);
         }
-
-        /*
-        //Book the selected flight with the viewModel
-        public async Task<IActionResult> ConfirmBookingAsync(BookingViewModel bookingViewModel)
-        {
-
-            Booking booking = new Booking();
-
-            booking.FlighId = bookingViewModel.FlightId;
-            booking.CustomerId = bookingViewModel.CustomerId;
-            booking.TicketId = bookingViewModel.TicketId;
-
-            await ApiClientFactory.Instance.SaveBooking(booking);
-
-            return View();
-        }
-        */
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -9,6 +9,8 @@ namespace VSJetClient.Factory
 {
     public partial class ApiClient
     {
+
+        //===========================================GET=============================================================
         //Get all flight
         public async Task<List<Flight>> GetFlights()
         {
@@ -17,40 +19,18 @@ namespace VSJetClient.Factory
             return await GetAsync<List<Flight>>(requestUrl);
         }
 
-        //Get one flight
+        //Get one flight by its id
         public async Task<Flight> GetFlight(int id)
         {
             var requestUrl = CreateRequestUri(string.Format(System.Globalization.CultureInfo.InvariantCulture,
                 "Flight/" + id));
             return await GetAsync<Flight>(requestUrl);
         }
+        //===========================================================================================================
 
 
-        //Get one booking
-        public async Task<Booking> GetBooking(int id)
-        {
-            var requestUrl = CreateRequestUri(string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                "Booking/" + id));
-            return await GetAsync<Booking>(requestUrl);
-        }
-
-        //Get one customer by fk
-        public async Task<Customer> GetCustomerByFk(int fk)
-        {
-            var requestUrl = CreateRequestUri(string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                "Customer/" + fk));
-            return await GetAsync<Customer>(requestUrl);
-        }
-
-        //Get one ticket by fk
-        public async Task<Ticket> GetTicketbyFk(int fk)
-        {
-            var requestUrl = CreateRequestUri(string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                "Ticket/" + fk));
-            return await GetAsync<Ticket>(requestUrl);
-        }
-
-        //Save one booking
+        //===========================================POST============================================================
+        //Create one booking
         public async Task<Message<Booking>> SaveBooking(Booking model)
         {
             var requestUrl = CreateRequestUri(string.Format(System.Globalization.CultureInfo.InvariantCulture,
@@ -73,5 +53,6 @@ namespace VSJetClient.Factory
                 "Ticket/"));
             return await PostAsync<Ticket>(requestUrl, model);
         }
+        //===========================================================================================================
     }
 }
